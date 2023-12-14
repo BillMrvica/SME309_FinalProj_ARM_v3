@@ -11,7 +11,7 @@ module Adder_32 (
     genvar i;
     generate
         for(i=0; i<8; i=i+1) begin
-            CarrierAheadFullAdder u_CarrierAheadFullAdder4(
+            CarrierAheadFullAdder u_CarrierAheadFullAdder4（
                 .a    ( a[(4*i+3):i*4]    ),
                 .b    ( b[(4*i+3):i*4]    ),
                 .c_in ( carrier[i] ),
