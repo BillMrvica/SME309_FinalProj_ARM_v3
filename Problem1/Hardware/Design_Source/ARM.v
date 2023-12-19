@@ -45,7 +45,7 @@ module ARM(
     // wire [31:0] RD2_shifted;
     wire [31:0] RD2_shifted_D, RD2_shifted_E;
 
-    wire [31:0] SrcA_E
+    wire [31:0] SrcA_E;
     // wire [31:0] Src_B;
     wire [31:0] SrcB_E;
     // wire [31:0] ExtImm;
@@ -174,21 +174,26 @@ module ARM(
         .RA2D      ( RA2_D      ),
         .StallD    ( Stall_D    ),
         .FlushD    ( Flush_D    ),
+        
         .RA1E      ( RA1_E      ),
         .RA2E      ( RA2_E      ),
         .WA3E      ( WA3_E      ),
         .MemtoRegE ( MemtoReg_E ),
         .PCSrcE    ( PCSrc_E    ),
+        .RegWriteE ( RegWrite_E ),
         .ForwardAE ( ForwardA_E ),
         .ForwardBE ( ForwardB_E ),
         .FlushE    ( Flush_E    ),
+        
         .WA3M      ( WA3_M      ),
         .RA2M      ( RA2_M      ),
         .RegWriteM ( RegWrite_M ),
         .MemWriteM ( MemWrite_M ),
         .ForwardM  ( Forward_M  ),
+        
         .WA3W      ( WA3_W      ),
-        .RegWriteW  ( RegWrite_W  )
+        .RegWriteW  ( RegWrite_W  ),
+        .MemtoRegW ( MemtoReg_W )
     );
 
     assign MemWrite = MemWrite_M;
@@ -227,12 +232,12 @@ module ARM(
         else if(Stall_D) Instr_D <= Instr_D;
         // How to define Flush operation?
         else if(Flush_D) Instr_D <= 0;
-        else Instr_D <= Instr_F
+        else Instr_D <= Instr_F;
     end
 
     // DECODE -> EXECUTE
     always @(posedge CLK or negedge Reset) begin
-        if(Reset) begin
+        if(~Reset) begin
             PCS_E <= 0;   RegW_E <= 0;  
             MemW_E <= 0;  FlagW_E <= 0;  
             ALUControl_E <= 0;  MemtoReg_E <= 0;  
@@ -240,7 +245,7 @@ module ARM(
             RD1_E <= 0;  RD2_shifted_E <= 0;
             WA3_E <= 0;  ExtImm_E <= 0;
         end
-        else if(Flush) begin
+        else if(Flush_E) begin
             PCS_E <= 0;   RegW_E <= 0;  
             MemW_E <= 0;  FlagW_E <= 0;  
             ALUControl_E <= 0;  MemtoReg_E <= 0;  
@@ -260,7 +265,7 @@ module ARM(
 
     // EXECUTE -> MEM
     always @(posedge CLK or posedge Reset) begin
-        if(Reset) begin
+        if(~Reset) begin
             RegWrite_M <= 0;
             MemWrite_M <= 0;
             MemtoReg_M <= 0;
@@ -280,7 +285,7 @@ module ARM(
 
     // MEM -> WRITE_BACK
     always @(posedge CLK or posedge Reset) begin
-        if(Reset) begin
+        if(~Reset) begin
             RegWrite_W <= 0;
             MemtoReg_W <= 0;
             ReadData_W <= 0;

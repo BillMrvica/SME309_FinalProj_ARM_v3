@@ -22,7 +22,7 @@ module ALU(
               (((ALUControl==4'b0011) && (ALUControl==4'b0111)) ? (~Src_A + 1'b1) : 
               (((ALUControl==4'b1110) && (ALUControl==4'b1111)) ? (~Src_B) : Src_B));
     // Support ADC, SBC, RSC. If SBC/RSC, use reversed carrier
-    assign carrier = (ALUControl=4'b0101) ? C : (((ALUControl=4'b0110) && (ALUControl=4'b0111)) ? ~C : 0);
+    assign carrier = (ALUControl==4'b0101) ? C : (((ALUControl==4'b0110) && (ALUControl==4'b0111)) ? ~C : 0);
 
     Adder_32 u_Adder_32(
         .a    ( A    ),

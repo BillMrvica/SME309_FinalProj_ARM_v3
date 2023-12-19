@@ -14,6 +14,7 @@ module hazard(
     input [3:0] WA3E,
     input MemtoRegE,
     input PCSrcE,
+    input RegWriteE, 
     output [1:0] ForwardAE,
     output [1:0] ForwardBE,
     output FlushE,
@@ -27,12 +28,13 @@ module hazard(
 
     // Write-back stage
     input [3:0] WA3W,
-    input RegWriteW
+    input RegWriteW,
+    input MemtoRegW
 );
 
     wire Match_1D_E, Match_2D_E;
     wire Match_1E_M, Match_2E_M;
-    wire Match_1E_W, Match_1E_W;
+    wire Match_1E_W, Match_2E_W;
     wire FlushE1, FlushE2;
     wire LDRstall;
 
@@ -45,15 +47,16 @@ module hazard(
 
     // I. Data forward
     // I.1. DP-DP
-    assign ForwardAE = (Match_1E_M && RegWrite_M) ? 2'b10 : 
-                       ((Match_1E_W && RegWrite_W) ? 2'b01 : 2'b00);
-    assign ForwardBE = (Match_2E_M && RegWrite_M) ? 2'b10 : 
-                       ((Match_2E_W && RegWrite_W) ? 2'b01 : 2'b00);
+    assign ForwardAE = (Match_1E_M && RegWriteM) ? 2'b10 : 
+                       ((Match_1E_W && RegWriteW) ? 2'b01 : 2'b00);
+    assign ForwardBE = (Match_2E_M && RegWriteM) ? 2'b10 : 
+                       ((Match_2E_W && RegWriteW) ? 2'b01 : 2'b00);
     // I.2. MEM-MEM (LDR->STR, The stored content is just loaded from Mem)
     assign ForwardM =  (RA2M == WA3W) & MemWriteM & MemtoRegW & RegWriteW;
 
     // Stall
-    assign LDRstall = (Match_1D_E || Match_2D_E) & MemtoRegE & RegWrite_E; // write back value is the operand of the next instruction
+    // Current only support one-cycle stall, for MUL/DIV or cache, there are chances to stall for multiple cycles
+    assign LDRstall = (Match_1D_E || Match_2D_E) & MemtoRegE & RegWriteE; // write back value is the operand of the next instruction
     assign StallF = LDRstall;
     assign StallD = LDRstall;
     assign FlushE1 = LDRstall;
