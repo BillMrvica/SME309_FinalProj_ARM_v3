@@ -160,7 +160,6 @@ module Set_Asso_Cache_4W_256S(
             Dirty[set_addr][find_way] <= 1'b0;
             tag[set_addr][find_way] <= input_tag;
         end
-        
     end
 
     assign hit_way_num = (hit_miss==4'b1000) ? 3'd3 : 
