@@ -41,26 +41,115 @@ module tb_SA_Cache;
 
         // enable cache
         #100 nrst = 1;
-
+        #1;
+    // I. Different set read tests
         // 1st read, read miss and load from mem
         #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'd0;  mem_data = 32'h1111_1111;
         #30 mem_ready = 1; 
         #10 mem_ready = 0;
+        #10 cpu_valid = 0;
 
         // 2nd read, read miss and load from mem
         #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'd4;  mem_data = 32'h2222_2222;
-        #30 mem_ready = 1; 
+        #40 mem_ready = 1; 
         #10 mem_ready = 0;
+        #10 cpu_valid = 0;
         
         // 3rd read, read miss and load from mem
         #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'd8;  mem_data = 32'h3333_3333;
-        #30 mem_ready = 1; 
+        #50 mem_ready = 1; 
         #10 mem_ready = 0;
+        #10 cpu_valid = 0;
 
         // 4th read, read miss and load from mem
         #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'd12;  mem_data = 32'h4444_4444;
         #30 mem_ready = 1; 
         #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        #100;
+    // II. Occupation on the same sets
+        // 1st read, read miss and load from mem
+        #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'h1000;  mem_data = 32'h1111_1111;
+        #30 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        // 2nd read, read miss and load from mem
+        #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'h2000;  mem_data = 32'h2222_2222;
+        #30 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+        
+        // 3rd read, read miss and load from mem
+        #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'h3000;  mem_data = 32'h3333_3333;
+        #30 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        // 4th read, read miss and load from mem
+        #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'h4000;  mem_data = 32'h4444_4444;
+        #30 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        // 5st read, read miss and load from mem
+        #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'h5000;  mem_data = 32'h5555_5555;
+        #30 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        // 6nd read, read miss and load from mem
+        #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'h6000;  mem_data = 32'h6666_6666;
+        #30 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+        
+        // 7rd read, read miss and load from mem
+        #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'h7000;  mem_data = 32'h7777_7777;
+        #30 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        // 8th read, read miss and load from mem
+        #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'h8000;  mem_data = 32'h8888_8888;
+        #30 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        // 9th read, read miss and load from mem
+        #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'h9000;  mem_data = 32'h9999_9999;
+        #30 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        #100;
+    // III. write test
+        // 1st write, write miss and load from mem
+        #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h10;  cpu_write_data = 32'h1111_0000;
+        #50 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        // 2nd read, read miss and load from mem
+        #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h10;  cpu_write_data = 32'h2222_0000;
+        #50 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        // 3rd write, write miss and load from mem
+        #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h10000;  cpu_write_data = 32'h1010_1010;
+        #50 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        // 4th read, read miss and load from mem
+        #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h20000;  cpu_write_data = 32'h2020_2020;
+        #50 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        #100;
 
         #100 $finish;
     end

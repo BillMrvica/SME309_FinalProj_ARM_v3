@@ -36,23 +36,23 @@ module Set_Asso_Cache_4W_256S(
     localparam LOAD_FROM_MEM = 2'd2;
 
     // Cache architecture
-    // reg [31:0] CacheData [SET-1:0][WAY_NUM-1:0];
-    // reg [32-2-SET_NUM-1:0] tag [SET-1:0][WAY_NUM-1:0];
-    // reg V [SET-1:0][WAY_NUM-1:0];
-    // reg Dirty [SET-1:0][WAY_NUM-1:0];
-    reg [SET-1:0][WAY_NUM-1:0][31:0] CacheData;
-    reg [SET-1:0][WAY_NUM-1:0][32-2-SET_NUM-1:0] tag;
-    reg [SET-1:0][WAY_NUM-1:0] V;
-    reg [SET-1:0][WAY_NUM-1:0] Dirty;
+    reg [31:0] CacheData [SET-1:0][WAY_NUM-1:0];
+    reg [32-2-SET_NUM-1:0] tag [SET-1:0][WAY_NUM-1:0];
+    reg V [SET-1:0][WAY_NUM-1:0];
+    reg Dirty [SET-1:0][WAY_NUM-1:0];
+    // reg [SET-1:0][WAY_NUM-1:0][31:0] CacheData;
+    // reg [SET-1:0][WAY_NUM-1:0][32-2-SET_NUM-1:0] tag;
+    // reg [SET-1:0][WAY_NUM-1:0] V;
+    // reg [SET-1:0][WAY_NUM-1:0] Dirty;
     
     // On one single set
     wire [SET_NUM-1:0] set_addr;
     wire [32-2-SET_NUM-1:0] input_tag;
 
-    // wire [32:0] set_data [WAY_NUM-1:0];
-    // wire [32-2-SET_NUM-1:0] set_tag [WAY_NUM-1:0];
-    wire [WAY_NUM-1:0][32:0] set_data;
-    wire [WAY_NUM-1:0][32-2-SET_NUM-1:0] set_tag;
+    wire [31:0] set_data [WAY_NUM-1:0];
+    wire [32-2-SET_NUM-1:0] set_tag [WAY_NUM-1:0];
+    // wire [WAY_NUM-1:0][32:0] set_data;
+    // wire [WAY_NUM-1:0][32-2-SET_NUM-1:0] set_tag;
     wire [WAY_NUM-1:0] set_V;
     wire [WAY_NUM-1:0] set_Dirty;
     wire [WAY_NUM-1:0] hit_miss;
@@ -63,15 +63,13 @@ module Set_Asso_Cache_4W_256S(
     wire read_hit, read_miss;
     wire write_hit, write_miss;
     wire no_clean_blocks; // from IDLE to WRITE_BACK
-    wire write_back_finish;
-    wire write_back_allocate_finish; // from LOAD_FROM_MEM to IDLE
 
     always @(posedge clk or negedge nrst) begin
         if(~nrst) cache_state <= IDLE;
         else begin
-            case(state)
+            case(cache_state)
                 IDLE: begin
-                        if(read_miss|write_miss) cache_state <= no_clean_blocks ? WRITE_BACK : READ_FROM_MEM;
+                        if(read_miss|write_miss) cache_state <= no_clean_blocks ? WRITE_BACK : LOAD_FROM_MEM;
                         else cache_state <= IDLE;
                     end
                 WRITE_BACK: cache_state <= LOAD_FROM_MEM; // for one clock cycle
@@ -82,25 +80,20 @@ module Set_Asso_Cache_4W_256S(
     end
 
     // Define cache location
+    /*
+        1. Check whether an empty block exists on a set
+        2. Check whether a clean block exists on a set
+        3. Switch to Write Back, set it to be 0
+    */
     wire [1:0] find_way;
-    always @* begin
-        /*
-            1. Check whether an empty block exists on a set
-            2. Check whether a clean block exists on a set
-            3. Switch to Write Back, set it to be 0
-        */
-        if(&set_V == 0) begin
-            find_way = (~set_V[0]) ? 2'd0 : 
-                       ((~set_V[1]) ? 2'd1 : 
-                       ((~set_V[2]) ? 2'd2 : 2'd3));
-        end
-        else if(&set_Dirty == 0) begin
-            find_way = (~set_Dirty[0]) ? 2'd0 : 
-                       ((~set_Dirty[1]) ? 2'd1 : 
-                       ((~set_Dirty[2]) ? 2'd2 : 2'd3));
-        end
-        else find_way = 0;
-    end
+    assign find_way = (~set_V[0]) ? 2'd0 : 
+                     ((~set_V[1]) ? 2'd1 : 
+                     ((~set_V[2]) ? 2'd2 : 
+                     ((~set_V[3]) ? 2'd3 : 
+                     (~set_Dirty[0]) ? 2'd0 : 
+                     ((~set_Dirty[1]) ? 2'd1 : 
+                     ((~set_Dirty[2]) ? 2'd2 : 
+                     ((~set_Dirty[3]) ? 2'd3 : 2'd0))))));
 
     // Set control
     assign set_addr = cache_addr[9:2];
@@ -125,12 +118,12 @@ module Set_Asso_Cache_4W_256S(
     assign write_hit  = cpu_valid && ~cpu_op && (|hit_miss);
 
     // write-back control signal
-    assign no_clean_blocks = ((&set_V && &set_Dirty) == 0); // whether write-back
-    assign cache_valid = (state == WRITE_BACK);
+    assign no_clean_blocks = !((&set_V && &set_Dirty) == 0); // whether write-back
+    assign cache_valid = (cache_state == WRITE_BACK);
     assign cache_write_data = set_data[find_way];
 
     // Cache to CPU
-    assign cache_data = (cpu_op && read_hit) ? set_data[hit_way_num[1:0]] : 0; 
+    assign cache_data = (cpu_op && read_hit) ? set_data[hit_way_num] : 0; 
     assign cache_ready = read_hit && (cache_state == IDLE); 
     
     assign mem_addr = (cache_state==WRITE_BACK) ? {set_tag[find_way], set_addr, 2'b00} : cache_addr; // the address of the dirty blocks
@@ -139,10 +132,14 @@ module Set_Asso_Cache_4W_256S(
     // Cache SRAM control
     always @(posedge clk or negedge nrst) begin
         if(~nrst) begin
-            V <= 0;
-            tag <= 0;
-            CacheData <= 0;
-            Dirty <= 0;
+            for(integer i=0; i<WAY_NUM; i=i+1) begin
+                for(integer j=0; j<SET; j=j+1) begin
+                    V[j][i] <= 0;
+                    tag[j][i] <= 0;
+                    CacheData[j][i] <= 0;
+                    Dirty[j][i] <= 0;
+                end
+            end
         end
         // For write hit
         else if(write_hit) begin
@@ -157,29 +154,18 @@ module Set_Asso_Cache_4W_256S(
             Dirty[set_addr][find_way] <= 1'b0;
         end
         // read from memory
-        else if((cache_state==READ_FROM_MEM) && mem_ready) begin
+        else if((cache_state==LOAD_FROM_MEM) && mem_ready) begin
             CacheData[set_addr][find_way] <= mem_data;
             V[set_addr][find_way] <= 1'b1;
             Dirty[set_addr][find_way] <= 1'b0;
             tag[set_addr][find_way] <= input_tag;
         end
-        else begin
-            CacheData <= CacheData;
-            V <= V;
-            tag <= tag;
-            Dirty <= Dirty;
-        end
+        
     end
 
+    assign hit_way_num = (hit_miss==4'b1000) ? 3'd3 : 
+                        ((hit_miss==4'b0100) ? 2'd2 : 
+                        ((hit_miss==4'b0010) ? 2'd1 : 2'd0));
     
-    always @(hit_miss) begin
-        case(hit_miss)
-            4'b1000: hit_way_num = 3'd3;
-            4'b0100: hit_way_num = 3'd2;
-            4'b0010: hit_way_num = 3'd1;
-            4'b0001: hit_way_num = 3'd0;
-            //default: hit_way_num = 3'd7;
-        endcase
-    end
 
 endmodule
