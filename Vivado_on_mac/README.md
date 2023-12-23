@@ -1,7 +1,5 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 
-<a name="readme-top"></a>
-
 <br />
 <div align="center">
   <h3 align="center">Running Vivado 2018.3 on Mac M1 CPU</h3>
@@ -31,12 +29,11 @@
     <li><a href="#Installing-Vivado-in-Dockers">Installing Vivado on Mac</a></li>
     <li><a href="#Communication-between-Dockers-and-Mac">Communication between Dockers and Mac</a></li>
   </ol>
+<details>
 
 ## About The Project
 
 The project is dedicated to running Xilinx Vivado on macbooks with M1/M2 processors. The docker container could provide a separate ubuntu operating systems on macos without taking up too much memory usage.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
 
