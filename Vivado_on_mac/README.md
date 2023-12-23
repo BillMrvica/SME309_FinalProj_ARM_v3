@@ -27,7 +27,7 @@
       </ul>
     </li>
     <li><a href="#Installing-Vivado-in-Dockers">Installing Vivado on Mac</a></li>
-    <li><a href="#Communication-between-Dockers-and-Mac">Communication between Dockers and Mac</a></li>
+    <li><a href="#Communication-between-Dockers-and-Macos">Communication between Dockers and MacOS</a></li>
   </ol>
 </details> 
 
