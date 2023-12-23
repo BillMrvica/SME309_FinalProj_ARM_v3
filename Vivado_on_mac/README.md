@@ -29,7 +29,8 @@
     <li><a href="#Installing-Vivado-in-Dockers">Installing Vivado on Mac</a></li>
     <li><a href="#Communication-between-Dockers-and-Mac">Communication between Dockers and Mac</a></li>
   </ol>
-<details>
+</details> 
+
 
 ## About The Project
 
