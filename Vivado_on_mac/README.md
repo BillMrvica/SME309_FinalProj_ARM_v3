@@ -1,12 +1,12 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 
-`<a name="readme-top"></a>`
+<a name="readme-top"></a>
 
 <br />
 <div align="center">
   <h3 align="center">Running Vivado 2018.3 on Mac M1 CPU</h3>
 
-<p align="center">
+  <p align="center">
     Haihan Wu
 </div>
 
@@ -22,15 +22,15 @@
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li><a href="#brew">Homebrew</a></li>
+        <li><a href="#xquartz">xquartz</a></li>
+	<li><a href="#vivado-packages">Vivado Packages</a></li>
+	<li><a href="#Docker">Docker</a></li>
       </ul>
- <li>
-      <a href="#Installing-Vivado-in-Dockers">Installing Vivado on Mac</a>
- <li>
-	<a href="#Communication-between-Dockers-and-Mac">Communication between Dockers and Mac</a>
-<ul>
-<ul>
+    </li>
+    <li><a href="#Installing-Vivado-in-Dockers">Installing Vivado on Mac</a></li>
+    <li><a href="#Communication-between-Dockers-and-Mac">Communication between Dockers and Mac</a></li>
+  </ol>
 
 ## About The Project
 
