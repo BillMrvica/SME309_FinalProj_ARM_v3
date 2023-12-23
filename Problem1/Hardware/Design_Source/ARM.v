@@ -12,54 +12,56 @@ module ARM(
 
     wire [3:0] ALUFlags;
     // wire PCSrc;
-    wire PCS_D, PCS_E, PCSrc_E;
+    wire PCS_D;  reg PCS_E; wire PCSrc_E;
     // wire [31:0] PC_Plus_4;
     wire [31:0] PC_Plus_4_F, PC_Plus_8_D;
     // wire [31:0] Result;
     wire [31:0] Result_W;
 
     // wire MemtoReg;
-    wire MemtoReg_D, MemtoReg_E, MemtoReg_M, MemtoReg_W;
+    wire MemtoReg_D; reg MemtoReg_E, MemtoReg_M, MemtoReg_W;
     // wire ALUSrc;
-    wire ALUSrc_D, ALUSrc_E;
+    wire ALUSrc_D; reg ALUSrc_E;
     // wire [1:0] ImmSrc;
     wire [1:0] ImmSrc_D;
     // wire RegWrite;
-    wire RegW_D, RegW_E, RegWrite_E, RegWrite_M, RegWrite_W;
+    wire RegW_D; reg RegW_E;
+    wire RegWrite_E; reg RegWrite_M, RegWrite_W;
     // wire [1:0] RegSrc;
     wire [1:0] RegSrc_D;
     // wire [1:0] ALUControl;
-    wire [3:0] ALUControl_D, ALUControl_E;	
+    wire [3:0] ALUControl_D; reg [3:0] ALUControl_E;	
 
     // wire [3:0] A1;
-    wire [3:0] RA1_D;
+    wire [3:0] RA1_D; reg [3:0] RA1_E;
     // wire [3:0] A2;
-    wire [3:0] RA2_D;
+    wire [3:0] RA2_D; reg [3:0] RA2_E;
     // wire [3:0] A3;
-    wire [3:0] WA3_D, WA3_E, WA3_M, WA3_W;
+    wire [3:0] WA3_D; reg [3:0] WA3_E, WA3_M, WA3_W;
     wire [31:0] R15;
     // wire [31:0] RD1;
-    wire [31:0] RD1_D, RD1_E;
+    wire [31:0] RD1_D; reg [31:0] RD1_E;
     // wire [31:0] RD2;
     wire [31:0] RD2_D;
     // wire [31:0] RD2_shifted;
-    wire [31:0] RD2_shifted_D, RD2_shifted_E;
+    wire [31:0] RD2_shifted_D; reg [31:0] RD2_shifted_E, RD2_shifted_M;
 
     wire [31:0] SrcA_E;
     // wire [31:0] Src_B;
     wire [31:0] SrcB_E;
     // wire [31:0] ExtImm;
-    wire [31:0] ExtImm_D, ExtImm_E;
+    wire [31:0] ExtImm_D; reg [31:0] ExtImm_E;
 
-    wire MemW_D, MemW_E, MemWrite_E, MemWrite_M;
-    wire NoWrite_D, NoWrite_E;
-    wire [1:0] FlagW_D, FlagW_E;
+    wire MemW_D; reg MemW_E;
+    wire MemWrite_E; reg MemWrite_M;
+    wire NoWrite_D;  reg NoWrite_E;
+    wire [1:0] FlagW_D; reg [1:0] FlagW_E;
     wire carrier;
-    wire [3:0] Cond_D, Cond_E;
-    wire [31:0] Instr_F, Instr_D;
-    wire [31:0] ALUResult_E, ALUResult_M, ALUResult_W;
-    wire [31:0] WriteData_E, WriteData_M;
-    wire [31:0] ReadData_M, ReadData_W;
+    wire [3:0] Cond_D; reg [3:0] Cond_E;
+    wire [31:0] Instr_F;  reg [31:0] Instr_D;
+    wire [31:0] ALUResult_E; reg [31:0] ALUResult_M, ALUResult_W;
+    wire [31:0] WriteData_E; reg [31:0] WriteData_M;
+    wire [31:0] ReadData_M;  reg [31:0] ReadData_W;
 
     wire [31:0] SrcB_RD2;
 
@@ -75,7 +77,7 @@ module ARM(
         .Reset  ( Reset  ),
         .PCSrc  ( PCSrc_E  ),
         .Result ( ALUResult_E ),
-        .en     ( Stall_F ), // For load stall hazard
+        .en     ( ~Stall_F ), // For load stall hazard
 
         .PC     ( PC     ),
         .PC_Plus_4  ( PC_Plus_4_F  )
@@ -117,6 +119,8 @@ module ARM(
 
     CondLogic u_CondLogic(
         .CLK      ( CLK ),
+        .Reset    ( Reset ),
+
         .PCS      ( PCS_E ),
         .RegW     ( RegW_E ),
         .MemW     ( MemW_E ),
@@ -124,7 +128,7 @@ module ARM(
         .Cond     ( Cond_E ),
         .ALUFlags ( ALUFlags ),
         .NoWrite  ( NoWrite_E ),
-        .PCSrc    ( PCS_E ),
+        .PCSrc    ( PCSrc_E ),
         
         .RegWrite ( RegWrite_E ),
         .MemWrite ( MemWrite_E  ),
@@ -139,6 +143,7 @@ module ARM(
         .A3  ( WA3_W  ),
         .WD3 ( Result_W ),
         .R15 ( PC_Plus_8_D ),
+        
         .RD1 ( RD1_D ),
         .RD2  ( RD2_D  )
     );
@@ -186,7 +191,7 @@ module ARM(
         .FlushE    ( Flush_E    ),
         
         .WA3M      ( WA3_M      ),
-        .RA2M      ( RA2_M      ),
+        .RA2M      ( RD2_shifted_M  ),
         .RegWriteM ( RegWrite_M ),
         .MemWriteM ( MemWrite_M ),
         .ForwardM  ( Forward_M  ),
@@ -197,8 +202,7 @@ module ARM(
     );
 
     assign MemWrite = MemWrite_M;
-    assign Cond_D = Instr_D[31:29];
-    assign WA3_D = Instr_D[15:12];
+    assign Cond_D = Instr_D[31:28];
     assign Instr_F = Instr;
     assign PC_Plus_8_D = PC_Plus_4_F;
     assign ALUResult = ALUResult_M; // might change
@@ -216,13 +220,13 @@ module ARM(
     // assign WriteData = RD2;
     assign WriteData = (Forward_M) ? Result_W : WriteData_M; 
     // assign Result = (MemtoReg) ? ReadData : ALUResult; 
-    assign Result_W = (MemtoReg_W) ? ALUResult_W : ReadData_W;
+    assign Result_W = (MemtoReg_W) ? ReadData_W : ALUResult_W;
     // assign A1 = (RegSrc[0]) ? 4'd15 : Instr[19:16];
-    assign A1 = (RegSrc_D[0]) ? 4'd15 : Instr_D[19:16];
+    assign RA1_D = (RegSrc_D[0]) ? 4'd15 : Instr_D[19:16];
     // assign A2 = (RegSrc[1]) ? Instr[15:12] : Instr[3:0];
-    assign A2 = (RegSrc_D[1]) ? Instr_D[15:12] : Instr_D[3:0];
+    assign RA2_D = (RegSrc_D[1]) ? Instr_D[15:12] : Instr_D[3:0];
     // assign A3 = Instr[15:12];
-    assign A3 = WA3_W;
+    assign WA3_D = Instr_D[15:12];
 
 
     // Pipeline
@@ -236,14 +240,16 @@ module ARM(
     end
 
     // DECODE -> EXECUTE
-    always @(posedge CLK or negedge Reset) begin
-        if(~Reset) begin
+    always @(posedge CLK or posedge Reset) begin
+        if(Reset) begin
             PCS_E <= 0;   RegW_E <= 0;  
             MemW_E <= 0;  FlagW_E <= 0;  
             ALUControl_E <= 0;  MemtoReg_E <= 0;  
             ALUSrc_E <= 0;  Cond_E <= 0;
             RD1_E <= 0;  RD2_shifted_E <= 0;
             WA3_E <= 0;  ExtImm_E <= 0;
+            RA1_E <= 0;  RA2_E <= 0;
+            NoWrite_E <= 0;
         end
         else if(Flush_E) begin
             PCS_E <= 0;   RegW_E <= 0;  
@@ -252,26 +258,31 @@ module ARM(
             ALUSrc_E <= 0;  Cond_E <= 0;
             RD1_E <= 0;  RD2_shifted_E <= 0;
             WA3_E <= 0;  ExtImm_E <= 0;
+            RA1_E <= 0;  RA2_E <= 0;
+            NoWrite_E <= 0;
         end
         else begin
             PCS_E <= PCS_D;   RegW_E <= RegW_D;  
-            MemW_E <= MemW_E;  FlagW_E <= FlagW_E;  
+            MemW_E <= MemW_D;  FlagW_E <= FlagW_E;  
             ALUControl_E <= ALUControl_D;  MemtoReg_E <= MemtoReg_D;  
             ALUSrc_E <= ALUSrc_D;  Cond_E <= Cond_D;
             RD1_E <= RD1_D;  RD2_shifted_E <= RD2_shifted_D;
             WA3_E <= WA3_D;  ExtImm_E <= ExtImm_D;
+            RA1_E <= RA1_D;  RA2_E <= RA2_D;
+            NoWrite_E <= NoWrite_D;
         end
     end
 
     // EXECUTE -> MEM
     always @(posedge CLK or posedge Reset) begin
-        if(~Reset) begin
+        if(Reset) begin
             RegWrite_M <= 0;
             MemWrite_M <= 0;
             MemtoReg_M <= 0;
             ALUResult_M <= 0;
             WriteData_M <= 0;
             WA3_M <= 0;
+            RD2_shifted_M <= 0;
         end
         else begin
             RegWrite_M <= RegWrite_E;
@@ -280,12 +291,13 @@ module ARM(
             ALUResult_M <= ALUResult_E;
             WriteData_M <= WriteData_E;
             WA3_M <= WA3_E;
+            RD2_shifted_M <= RD2_shifted_E;
         end
     end
 
     // MEM -> WRITE_BACK
     always @(posedge CLK or posedge Reset) begin
-        if(~Reset) begin
+        if(Reset) begin
             RegWrite_W <= 0;
             MemtoReg_W <= 0;
             ReadData_W <= 0;

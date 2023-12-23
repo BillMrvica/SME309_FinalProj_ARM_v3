@@ -124,7 +124,7 @@ module Set_Asso_Cache_4W_256S(
 
     // Cache to CPU
     assign cache_data = (cpu_op && read_hit) ? set_data[hit_way_num] : 0; 
-    assign cache_ready = read_hit && (cache_state == IDLE); 
+    assign cache_ready = (read_hit|write_hit) && (cache_state == IDLE); 
     
     assign mem_addr = (cache_state==WRITE_BACK) ? {set_tag[find_way], set_addr, 2'b00} : cache_addr; // the address of the dirty blocks
     assign cache_op = (cache_state==WRITE_BACK) ? 0 : 1;
@@ -145,7 +145,7 @@ module Set_Asso_Cache_4W_256S(
         else if(write_hit) begin
             CacheData[set_addr][hit_way_num] <= cpu_write_data;
             // If the original value and the new loaded value are different, set Dirty
-            Dirty[set_addr][hit_way_num] <= (CacheData[set_addr][hit_way_num] != cpu_write_data); 
+            Dirty[set_addr][hit_way_num] <= ((~Dirty[set_addr][hit_way_num]) && (CacheData[set_addr][hit_way_num] != cpu_write_data)) ? 1 : Dirty[set_addr][hit_way_num]; 
         end
         // For write back
         // Set Dirty = 0 for the address

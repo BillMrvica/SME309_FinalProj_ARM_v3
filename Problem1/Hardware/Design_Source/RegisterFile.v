@@ -27,8 +27,8 @@ module RegisterFile(
                  RegBank[i] <= RegBank[i];
     end
 
-    assign RD1 = (A1 <= 4'd14) ? RegBank[A1] : R15;
-    assign RD2 = (A2 <= 4'd14) ? RegBank[A2] : R15;
+    assign RD1 = (A1 <= 4'd14) ? ((A3==A1 && WE3) ? WD3 : RegBank[A1]) : R15;
+    assign RD2 = (A2 <= 4'd14) ? ((A3==A2 && WE3) ? WD3 : RegBank[A2]) : R15;
 
     initial begin
         for(i=0;i<15;i=i+1) begin

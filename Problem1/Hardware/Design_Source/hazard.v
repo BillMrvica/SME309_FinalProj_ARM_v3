@@ -33,6 +33,7 @@ module hazard(
 );
 
     wire Match_1D_E, Match_2D_E;
+    wire Match_1D_M, Match_2D_M;
     wire Match_1E_M, Match_2E_M;
     wire Match_1E_W, Match_2E_W;
     wire FlushE1, FlushE2;
@@ -40,6 +41,8 @@ module hazard(
 
     assign Match_1D_E = (RA1D == WA3E);
     assign Match_2D_E = (RA2D == WA3E);
+    assign Match_1D_M = (RA1D == WA3M);
+    assign Match_2D_M = (RA2D == WA3M);
     assign Match_1E_M = (RA1E == WA3M);
     assign Match_2E_M = (RA2E == WA3M);
     assign Match_1E_W = (RA1E == WA3W);

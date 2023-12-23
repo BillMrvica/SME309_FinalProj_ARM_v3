@@ -12,7 +12,7 @@ initial begin
   RESET = 1;
   #10
   RESET = 0;
-  #8000
+  #800
   $finish;
 end
 always #5 CLK = ~CLK;

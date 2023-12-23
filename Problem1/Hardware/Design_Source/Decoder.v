@@ -53,7 +53,8 @@ module Decoder(
     */
     always @* begin
         if(DP==0) begin // not DP
-            ALUControl = (U==0) ? 2'b0010 : 2'b0100; // if U=0, negative imm, SUB
+            ALUControl = (MEM) ? ((U==0) ? 4'b0010 : 4'b0100) : // MEM: if U=0, negative imm, SUB
+                                 (4'b0100); // Branch
             FlagW = 2'b00;
             NoWrite = 0;
         end

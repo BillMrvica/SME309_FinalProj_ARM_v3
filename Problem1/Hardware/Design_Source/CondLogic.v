@@ -1,5 +1,7 @@
 module CondLogic(
     input CLK,
+    input Reset,
+
     input PCS,
     input RegW,
     input MemW,
@@ -18,11 +20,19 @@ module CondLogic(
     reg CondEx;
     reg N = 0, Z = 0, C = 0, V = 0;
     
-    always @(posedge CLK) begin
-        N <= (FlagW[1]) ? ALUFlags[3] : N;  // && CondEx
-        Z <= (FlagW[1]) ? ALUFlags[2] : Z;
-        C <= (FlagW[0]) ? ALUFlags[1] : C;
-        V <= (FlagW[0]) ? ALUFlags[0] : V;
+    always @(posedge CLK or posedge Reset) begin
+        if(Reset) begin
+            N <= 0;  // && CondEx
+            Z <= 0;
+            C <= 0;
+            V <= 0;
+        end
+        else begin   
+            N <= (FlagW[1]) ? ALUFlags[3] : N;  // && CondEx
+            Z <= (FlagW[1]) ? ALUFlags[2] : Z;
+            C <= (FlagW[0]) ? ALUFlags[1] : C;
+            V <= (FlagW[0]) ? ALUFlags[0] : V;
+        end
     end
 
     always @* begin
