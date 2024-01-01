@@ -2,9 +2,9 @@
 
 <br />
 <div align="center">
-  <h3 align="center">Running Vivado 2018.3 on Mac M1 CPU</h3>
+  <h3 align="center">Running Vivado 2018.3 in dockers on Mac M1/M2 chip</h3>
 
-  <p align="center">
+<p align="center">
     Haihan Wu
 </div>
 
@@ -29,8 +29,7 @@
     <li><a href="#Installing-Vivado-in-Dockers">Installing Vivado on Mac</a></li>
     <li><a href="#Communication-between-Dockers-and-Macos">Communication between Dockers and MacOS</a></li>
   </ol>
-</details> 
-
+</details>
 
 ## About The Project
 
@@ -174,7 +173,7 @@ start_gui
 
 ## Communication between Dockers and MacOS
 
-The repository that you have specified by command `-v` could be access by both MacOS and dockers. For example, we have mounted two repositories by command `-v ~/vivado-dir:/vivado`, `~/vivado-dir` on your mac and `/vivado` in your docker container. 
+The repository that you have specified by command `-v` could be access by both MacOS and dockers. For example, we have mounted two repositories by command `-v ~/vivado-dir:/vivado`, `~/vivado-dir` on your mac and `/vivado` in your docker container.
 
 For example, if I placed some .v files in `~/vivado-dir`, then I can access and make changes on these files from both mac and dockers. It's convenient to use VSCode to modify your HDL codes on your Mac side, and use those files to run simulation and synthesis in your docker.
 

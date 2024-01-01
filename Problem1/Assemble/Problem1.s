@@ -54,4 +54,4 @@ BTA
 halt	
 	B    halt
 	
-; ------- <code memory (ROM mapped to Instruction Memory) begins>
+; ------- <code memory (ROM mapped to Instruction Memory) begins>B

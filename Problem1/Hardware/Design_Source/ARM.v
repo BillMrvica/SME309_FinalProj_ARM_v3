@@ -263,7 +263,7 @@ module ARM(
         end
         else begin
             PCS_E <= PCS_D;   RegW_E <= RegW_D;  
-            MemW_E <= MemW_D;  FlagW_E <= FlagW_E;  
+            MemW_E <= MemW_D;  FlagW_E <= FlagW_D;  
             ALUControl_E <= ALUControl_D;  MemtoReg_E <= MemtoReg_D;  
             ALUSrc_E <= ALUSrc_D;  Cond_E <= Cond_D;
             RD1_E <= RD1_D;  RD2_shifted_E <= RD2_shifted_D;

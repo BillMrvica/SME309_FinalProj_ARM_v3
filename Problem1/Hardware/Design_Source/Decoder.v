@@ -65,7 +65,7 @@ module Decoder(
             NoWrite = (funct[4:1]>=4'b1000 && funct[4:1]<=4'b1011) ? 1'b1 : 1'b0; 
             
             // Functions relevant to add/sub: 2'b11, AND/OR/XOR: 2'b10
-            FlagW = (funct[0]) ? (((funct[4:1]>=4'b0010 && funct[4:1]<=4'b0111) && (funct[4:1]>=4'b1010 && funct[4:1]<=4'b1011)) ? 2'b11 : 2'b10) : 2'b00;
+            FlagW = (funct[0]) ? (((funct[4:1]>=4'b0010 && funct[4:1]<=4'b0111) || (funct[4:1]>=4'b1010 && funct[4:1]<=4'b1011)) ? 2'b11 : 2'b10) : 2'b00;
         end
     end
 

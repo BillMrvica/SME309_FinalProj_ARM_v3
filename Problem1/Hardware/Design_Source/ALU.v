@@ -21,11 +21,12 @@ module ALU(
         SUB, SBC, RSC: Src_B 2's complement; RSB, RSC: Src_A 2's complememt
         BIC, MVN: NOT(Src_B)
     */
-    assign B = ((ALUControl==4'b0010) || (ALUControl==4'b0110) || (ALUControl==4'b1010)) ? (~Src_B + 1'b1) : 
-              (((ALUControl==4'b0011) || (ALUControl==4'b0111)) ? (~Src_A + 1'b1) : 
+    assign B = ((ALUControl==4'b0010) || (ALUControl==4'b0110) || (ALUControl==4'b1010)) ? ~Src_B : 
+              (((ALUControl==4'b0011) || (ALUControl==4'b0111)) ? ~Src_A : 
               (((ALUControl==4'b1110) || (ALUControl==4'b1111)) ? (~Src_B) : Src_B));
     // Support ADC, SBC, RSC. If SBC/RSC, use reversed carrier
-    assign c_ALU = (ALUControl==4'b0101) ? C_in : 0;
+    assign c_ALU = ((ALUControl==4'b0101) || (ALUControl==4'b0010) || (ALUControl==4'b0110) || 
+    (ALUControl==4'b1010) || (ALUControl==4'b0011) || (ALUControl==4'b0111) ) ? C_in : 0;
 
     Adder_32 u_Adder_32(
         .a    ( A    ),
@@ -50,10 +51,18 @@ module ALU(
     
     assign N = (ALUResult <0);
     assign Z = (ALUResult == 0);
-    assign C = ((ALUControl==2'b01) || (ALUControl==2'b00)) & carrier;
+    assign C = ((ALUControl==4'b0010) || (ALUControl==4'b0011) || (ALUControl==4'b0100) || (ALUControl==4'b0101) 
+                || (ALUControl==4'b0110) || (ALUControl==4'b0111) || (ALUControl==4'b1010) || (ALUControl==4'b1011)) & carrier;
     assign V = ((ALUResult>0 && A<0) || (ALUResult<0 && A>0)) && 
-               (((ALUControl==2'b01) && ((A>0 && B<0) || (A<0 && B>0))) || 
-                ((ALUControl==2'b00) && ((A>0 && B>0) || (A<0 && B<0))));
+                (((ALUControl==4'b0010) && ((A>0 && B<0) || (A<0 && B>0))) || 
+                ((ALUControl==4'b0100) && ((A>0 && B>0) || (A<0 && B<0))) ||
+                ((ALUControl==4'b0011) && ((A>0 && B<0) || (A<0 && B>0))) ||
+                ((ALUControl==4'b0101) && ((A>0 && B>0) || (A<0 && B<0))) ||
+                ((ALUControl==4'b0110) && ((A>0 && B<0) || (A<0 && B>0))) ||
+                ((ALUControl==4'b0111) && ((A>0 && B<0) || (A<0 && B>0))) ||
+                ((ALUControl==4'b1010) && ((A>0 && B<0) || (A<0 && B>0))) ||
+                ((ALUControl==4'b1011) && ((A>0 && B>0) || (A<0 && B<0))));
+                       
     
     assign ALUFlags = {N, Z, C, V};
 endmodule
