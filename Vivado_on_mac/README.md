@@ -6,6 +6,8 @@
 
 <p align="center">
     Haihan Wu
+    SUSTech 2020
+    School of Microelectronics
 </div>
 
 <details>
