@@ -5,9 +5,7 @@
   <h3 align="center">Running Vivado 2018.3 in dockers on Mac M1/M2 chip</h3>
 
 <p align="center">
-    Haihan Wu
-    SUSTech 2020
-    School of Microelectronics
+    Haihan Wu, School of Microelectronics, SUSTech
 </div>
 
 <details>
