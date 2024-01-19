@@ -171,6 +171,10 @@ Now, you can start your vivado by command `vivado` and the terminal output shoul
 start_gui
 ```
 
+Now you are all set!
+
+![1704699359886](image/README/1704699359886.png)
+
 ## Communication between Dockers and MacOS
 
 The repository that you have specified by command `-v` could be access by both MacOS and dockers. For example, we have mounted two repositories by command `-v ~/vivado-dir:/vivado`, `~/vivado-dir` on your mac and `/vivado` in your docker container.

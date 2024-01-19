@@ -48,6 +48,9 @@ module tb_SA_Cache;
         #30 mem_ready = 1; 
         #10 mem_ready = 0;
         #10 cpu_valid = 0;
+                // 1st read, read miss and load from mem
+        #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'd0;  mem_data = 32'h1111_1111;
+        #10 cpu_valid = 0;
 
         // 2nd read, read miss and load from mem
         #50 cpu_op = 1'b1;  cpu_valid = 1'b1; cache_addr = 32'd4;  mem_data = 32'h2222_2222;
@@ -131,20 +134,42 @@ module tb_SA_Cache;
         #10 mem_ready = 0;
         #10 cpu_valid = 0;
 
-        // 2nd read, read miss and load from mem
+        // 2nd write, write miss and load from mem
         #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h10;  cpu_write_data = 32'h2222_0000;
         #50 mem_ready = 1; 
         #10 mem_ready = 0;
         #10 cpu_valid = 0;
+        
+        // 2nd read, write hit
+        #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h10;  cpu_write_data = 32'h2222_0001;
+        #10 cpu_valid = 0;
 
         // 3rd write, write miss and load from mem
-        #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h10000;  cpu_write_data = 32'h1010_1010;
+        #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h1020;  cpu_write_data = 32'h1010_1010;
         #50 mem_ready = 1; 
         #10 mem_ready = 0;
         #10 cpu_valid = 0;
 
-        // 4th read, read miss and load from mem
-        #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h20000;  cpu_write_data = 32'h2020_2020;
+        // 4th write, write miss and load from mem
+        #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h2020;  cpu_write_data = 32'h2020_2020;
+        #50 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+        
+        // 5rd write, write miss and load from mem
+        #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h3020;  cpu_write_data = 32'h3030_3030;
+        #50 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+
+        // 6th write, write miss and load from mem
+        #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h4020;  cpu_write_data = 32'h4040_4040;
+        #50 mem_ready = 1; 
+        #10 mem_ready = 0;
+        #10 cpu_valid = 0;
+        
+        // 7rd write, write miss, which write-back the blocks and update the new blocks
+        #100 cpu_op = 1'b0;  cpu_valid = 1'b1; cache_addr = 32'h5020;  cpu_write_data = 32'h5050_5050;
         #50 mem_ready = 1; 
         #10 mem_ready = 0;
         #10 cpu_valid = 0;
