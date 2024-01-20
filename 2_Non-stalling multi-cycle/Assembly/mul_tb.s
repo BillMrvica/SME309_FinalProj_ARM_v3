@@ -22,8 +22,8 @@
 	MUL R7,R5,R2;R7=66
 	LDR R8,constant3; R8=3
 	LDR R3,number0;R3=0
-	MULEQ R7,R1,R8; not execute,R7=66
-	ADDS R3,R3,#0; SET Z FLAG = 1
+	MULEQ R7,R1,R8; not execute,R7=66 , 16th 
+	ADDS R3,R3,#0; SET Z FLAG = 1, 17th
 	MULEQ R10,R1,R8; R10=15;
 	ADDS R10,R10,R7; R10 =66+15=81,flags are 0
 	

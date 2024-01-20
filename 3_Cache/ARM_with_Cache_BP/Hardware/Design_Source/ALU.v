@@ -13,21 +13,22 @@ module ALU(
     wire c_ALU;
     wire carrier;
 
-    // If reverse subtraction, assign Src_B to A
+// If reverse subtraction, assign Src_B to A
     assign A = (ALUControl==4'b0011) ? Src_B : 
-                ((ALUControl==4'b0111) ? (Src_B - 1'b1) : 
-                ((ALUControl == 4'b0110) ? (Src_A - 1'b1) : Src_A )) ;
+                (((ALUControl==4'b0111) && (C_in==1'b0)) ? (Src_B - 1'b1) : 
+                (((ALUControl==4'b0111) && (C_in==1'b1 )) ? Src_B : 
+                (((ALUControl==4'b0110) && (C_in==1'b0)) ?  (Src_A - 1'b1) : Src_A)));
     /* 
         SUB, SBC, RSC: Src_B 2's complement; RSB, RSC: Src_A 2's complememt
         BIC, MVN: NOT(Src_B)
     */
-    assign B = ((ALUControl==4'b0010) || (ALUControl==4'b0110) || (ALUControl==4'b1010)) ? (~Src_B + 1'b1) : 
-              (((ALUControl==4'b0011) || (ALUControl==4'b0111)) ? (~Src_A + 1'b1) : 
+    assign B = ((ALUControl==4'b0010) || (ALUControl==4'b0110) || (ALUControl==4'b1010)) ? ~Src_B : 
+              (((ALUControl==4'b0011) || (ALUControl==4'b0111)) ? ~Src_A : 
               (((ALUControl==4'b1110) || (ALUControl==4'b1111)) ? (~Src_B) : Src_B));
-    // Support ADC, SBC, RSC. If SBC/RSC, use reversed carrier
-    // assign c_ALU = (ALUControl==4'b0101) ? C_in : 0;
+    
+              // Support ADC, SBC, RSC. If SBC/RSC, use reversed carrier
     assign c_ALU = ((ALUControl==4'b0101) || (ALUControl==4'b0110) ||  (ALUControl==4'b0111) ) ? C_in : 
-                    ((ALUControl==4'b0010) || (ALUControl==4'b1010) || (ALUControl==4'b0011) ? 1'b1 : 0);
+    ((ALUControl==4'b0010) || (ALUControl==4'b1010) || (ALUControl==4'b0011) ? 1'b1 : 0);
 
     Adder_32 u_Adder_32(
         .a    ( A    ),

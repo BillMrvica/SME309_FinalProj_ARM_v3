@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 // The multiplier template is provided, and you should modify it to the improved one and share the hardware resource to implement division.
-//提供了乘法器模板，您应该将其修改为改进的模板，并共享硬件资源以实现除法。
+//锟结供锟剿乘凤拷锟斤拷模锟藉，锟斤拷应锟矫斤拷锟斤拷锟睫革拷为锟侥斤拷锟斤拷模锟藉，锟斤拷锟斤拷锟斤拷硬锟斤拷锟斤拷源锟斤拷实锟街筹拷锟斤拷锟斤拷
 module MCycle
   #(parameter width = 32) // 32-bits for ARMv3
    (
@@ -51,7 +51,7 @@ always @(*)
     endcase
 end
 
-reg [5:0] count = 0 ; // assuming no computation takes more than 64 cycles.假设没有计算需要超过64个周期。
+reg [5:0] count = 0 ; // assuming no computation takes more than 64 cycles.锟斤拷锟斤拷没锟叫硷拷锟斤拷锟斤拷要锟斤拷锟斤拷64锟斤拷锟斤拷锟节★拷
 reg [2*width:0] temp_sum2 = 0 ;
 reg [2*width:0] shifted_op2_divider_mul ;
 reg [2*width:0] temp_sum_divider_mul;
