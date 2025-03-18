@@ -6,6 +6,7 @@
 
 <p align="center">
     Haihan Wu
+	Southern University of Science and Technology (SUSTech)
 </div>
 
 <details>
